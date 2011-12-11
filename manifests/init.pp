@@ -45,13 +45,14 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
             group => root,
      }
      
-#     file { "/etc/init/${esBasename}.conf":
-#          content => template("elasticsearch/upstart.elasticsearch.conf.erb"),
-#          ensure => present,
-#          owner => root,
-#          group => root,
-#          mode => 644
-#     }
+     file { "/etc/init/${esBasename}.conf":
+          content => template("elasticsearch/upstart.elasticsearch.conf.erb"),
+          ensure => present,
+          owner => root,
+          group => root,
+          mode => 644,
+          require => File["/etc/init.d/elasticsearch"]
+     }
 
      # Make sure we have the application path
      file { "$esPath":
@@ -193,16 +194,15 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       file { "$esPath/logs":
            ensure => link,
            target => "/var/log/$esBasename",
-           force => true,
-           require => File["/var/log/$esBasename"]
+           force => true
       }
-            
+
       # Ensure the service is running
       service { "$esBasename":
             enable => true,
             ensure => running,
             hasrestart => true,
-            require => File["$esPath/logs"]
+            require => [ File["/etc/init/${esBasename}.conf"], File["$esPath/logs"] ]
       }
 
 }
