@@ -29,10 +29,6 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
 
       include jre
 
-      package { "sun-java6-jre":
-        ensure => installed
-      }
-
       # Ensure the elasticsearch user is present
       user { "$esBasename":
                ensure => "present",
