@@ -134,7 +134,7 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       
       # Stage the Service Package
       file { "/tmp/$esServiceFile":
-           source => "puppet:///elasticsearch/$esServiceFile",
+           source => "puppet:///modules/elasticsearch/$esServiceFile",
             require => Exec["elasticsearch-package"]
       }
       
@@ -163,7 +163,7 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       
       # Add customized startup script (see: http://www.elasticsearch.org/tutorials/2011/02/22/running-elasticsearch-as-a-non-root-user.html)
       file { "$esPath/bin/service/elasticsearch":
-             source => "puppet:///elasticsearch/elasticsearch",
+             source => "puppet:///modules/elasticsearch/elasticsearch",
              require => file["$esPath/bin/service"]
       }
 
