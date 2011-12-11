@@ -6,36 +6,36 @@
 # include elasticsearch
 
 class elasticsearch($version = "0.18.5", $xmx = "2048m") {
-      $esBasename       = "elasticsearch"
-      $esName           = "${esBasename}-${version}"
-      $esFile           = "${esName}.tar.gz"
-      $esServiceName    = "${esBasename}-servicewrapper"
-      $esServiceFile    = "${esServiceName}.tar.gz"
-      $esPath           = "/usr/local/${esName}"
-      $esPathLink       = "/usr/local/${esBasename}"
-      $esDataPath       = "/var/lib/${esBasename}"
-      $esLibPath        = "${esDataPath}"
-      $esLogPath        = "/var/log/${esBasename}"
-      $esXms            = "256m"
-      $esXmx            = "${xmx}"
-      $cluster          = "${esBasename}"
-      $esTCPPortRange   = "9300-9399"
-      $esHTTPPortRange  = "9200-9299"
-      $esUlimitNofile   = "32000"
-      $esUlimitMemlock  = "unlimited"
-      $esPidpath        = "/var/run"
-      $esPidfile        = "${esPidpath}/${esBasename}.pid"
-      $esJarfile        = "${esName}.jar"
+     $esBasename       = "elasticsearch"
+     $esName           = "${esBasename}-${version}"
+     $esFile           = "${esName}.tar.gz"
+     $esServiceName    = "${esBasename}-servicewrapper"
+     $esServiceFile    = "${esServiceName}.tar.gz"
+     $esPath           = "/usr/local/${esName}"
+     $esLockPath       = "${esPath}/lock"
+     $esPathLink       = "/usr/local/${esBasename}"
+     $esDataPath       = "/var/lib/${esBasename}"
+     $esLibPath        = "${esDataPath}"
+     $esLogPath        = "/var/log/${esBasename}"
+     $esXms            = "256m"
+     $esXmx            = "${xmx}"
+     $cluster          = "${esBasename}"
+     $esTCPPortRange   = "9300-9399"
+     $esHTTPPortRange  = "9200-9299"
+     $esUlimitNofile   = "32000"
+     $esUlimitMemlock  = "unlimited"
+     $esPidpath        = "/var/run"
+     $esPidfile        = "${esPidpath}/${esBasename}.pid"
+     $esJarfile        = "${esName}.jar"
 
-      include jre
+     include jre
 
-      # Ensure the elasticsearch user is present
-      user { "$esBasename":
+     # Ensure the elasticsearch user is present
+     user { "$esBasename":
                ensure => "present",
                comment => "Elasticsearch user created by puppet",
                managehome => true,
-               shell   => "/bin/false",
-               uid => 901
+               shell   => "/bin/false"
      }
 
      file { "/etc/security/limits.d/${esBasename}.conf":
@@ -93,16 +93,15 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
            ensure => link,
            target => "$esPath",
            require => Exec["stop-elasticsearch-version-change"] 
-           
       }
-  
+
       # Ensure the data path is created
       file { "$esDataPath":
            ensure => directory,
            owner  => "$esBasename",
            group  => "$esBasename",
            require => Exec["elasticsearch-package"],
-           recurse => true           
+           recurse => true
       }
 
       # Ensure the data path is created
@@ -135,7 +134,7 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       
       # Stage the Service Package
       file { "/tmp/$esServiceFile":
-           source => "puppet:///modules/elasticsearch/$esServiceFile",
+            source => "puppet:///modules/elasticsearch/$esServiceFile",
             require => Exec["elasticsearch-package"]
       }
       
@@ -148,7 +147,7 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       }
 
       # Ensure the service is present
-      file { "$esPath/bin/service":
+      file { ["$esPath/bin/service", "$esLockPath"]:
            ensure => directory,
            owner  => elasticsearch,
            group  => elasticsearch,
@@ -161,11 +160,11 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
              content => template("elasticsearch/elasticsearch.conf.erb"),
              require => file["$esPath/bin/service"]
       }
-      
+
       # Add customized startup script (see: http://www.elasticsearch.org/tutorials/2011/02/22/running-elasticsearch-as-a-non-root-user.html)
       file { "$esPath/bin/service/elasticsearch":
              source => "puppet:///modules/elasticsearch/elasticsearch",
-             require => file["$esPath/bin/service"]
+             require => [ File["$esPath/bin/service"], File["$esLockPath"] ]
       }
 
       # Create startup script
