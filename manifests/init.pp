@@ -27,6 +27,11 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       $esPidfile        = "${esPidpath}/${esBasename}.pid"
       $esJarfile        = "${esName}.jar"
 
+      apt::sources_list {"canonical-partners":
+        ensure  => present,
+        content => "deb http://archive.canonical.com/ lucid partner",
+      }
+
       package { "sun-java6-jre":
         ensure => installed
       }
