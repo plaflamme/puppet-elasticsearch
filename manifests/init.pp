@@ -11,11 +11,11 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       $esFile           = "${esName}.tar.gz"
       $esServiceName    = "${esBasename}-servicewrapper"
       $esServiceFile    = "${esServiceName}.tar.gz"
-      $esPath           = "${ebs1}/usr/local/${esName}"
+      $esPath           = "/usr/local/${esName}"
       $esPathLink       = "/usr/local/${esBasename}"
-      $esDataPath       = "${ebs1}/var/lib/${esBasename}"
+      $esDataPath       = "/var/lib/${esBasename}"
       $esLibPath        = "${esDataPath}"
-      $esLogPath        = "${ebs1}/var/log/${esBasename}"
+      $esLogPath        = "/var/log/${esBasename}"
       $esXms            = "256m"
       $esXmx            = "${xmx}"
       $cluster          = "${esBasename}"
@@ -33,7 +33,7 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
                comment => "Elasticsearch user created by puppet",
                managehome => true,
                shell   => "/bin/false",          
-               require => [Package["sun-java6-jre"], lvmconfig[$ebs1]],
+               require => [Package["sun-java6-jre"]],
                uid => 901
      }
      
@@ -51,13 +51,6 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
 #          group => root,
 #          mode => 644
 #     }
-
-     exec { "mkdir-ebs-mongohome":
-          path => "/bin:/usr/bin",
-          command => "mkdir -p $ebs1/usr/local",
-          before => File["$esPath"],
-          require => user["$esBasename"]
-     }    
 
      # Make sure we have the application path
      file { "$esPath":
@@ -111,11 +104,11 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       }
 
       # Ensure the data path is created
-      file { "/var/lib/${esBasename}":
-           ensure => link,
-           target => "${esDataPath}",
-           require => File["$esDataPath"],
-      }
+#      file { "/var/lib/${esBasename}":
+#           ensure => link,
+#           target => "${esDataPath}",
+#           require => File["$esDataPath"],
+#      }
 
       # Ensure the link to the data path is set
       file { "$esPath/data":
@@ -190,11 +183,11 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       }
       
       # Ensure logging link is in place
-      file { "/var/log/$esBasename":
-           ensure => link,
-           target => "$esLogPath",
-           require => [File["${esLogPath}"], File["/etc/init.d/$esBasename"]]
-      }
+#      file { "/var/log/$esBasename":
+#           ensure => link,
+#           target => "$esLogPath",
+#           require => [File["${esLogPath}"], File["/etc/init.d/$esBasename"]]
+#      }
 
       file { "$esPath/logs":
            ensure => link,
