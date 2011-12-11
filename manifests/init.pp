@@ -64,7 +64,7 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       
       # Temp location
       file { "/tmp/$esFile":
-             source  => "puppet:///elasticsearch/$esFile",
+             source  => "puppet:///modules/elasticsearch/$esFile",
              require => File["$esPath"],
              owner => "$esBasename"
       }
