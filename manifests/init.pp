@@ -26,17 +26,20 @@ class elasticsearch($version = "0.18.5", $xmx = "2048m") {
       $esPidpath        = "/var/run"
       $esPidfile        = "${esPidpath}/${esBasename}.pid"
       $esJarfile        = "${esName}.jar"
-       
+
+      package { "sun-java6-jre":
+        ensure => installed
+      }
+
       # Ensure the elasticsearch user is present
       user { "$esBasename":
                ensure => "present",
                comment => "Elasticsearch user created by puppet",
                managehome => true,
-               shell   => "/bin/false",          
-               require => [Package["sun-java6-jre"]],
+               shell   => "/bin/false",
                uid => 901
      }
-     
+
      file { "/etc/security/limits.d/${esBasename}.conf":
             content => template("elasticsearch/elasticsearch.limits.conf.erb"),                                                                                                    
             ensure => present,
