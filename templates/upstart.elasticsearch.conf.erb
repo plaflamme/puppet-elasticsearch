@@ -8,7 +8,11 @@ env ES_HOME=<%= esPath %>
 env ES_CLASSPATH=<%= esJarfile -%>:<%= esLibPath -%>/*
 
 script
-    JAVA=<%= jre6JavaHome %>
+    if [ -x "$JAVA_HOME/bin/java" ]; then
+        JAVA=$JAVA_HOME/bin/java
+    else
+        JAVA=`which java`
+    fi
 
     JAVA_OPTS="$JAVA_OPTS -Xms<%= esXms %>"
     JAVA_OPTS="$JAVA_OPTS -Xmx<%= esXmx %>"
