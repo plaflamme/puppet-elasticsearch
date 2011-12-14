@@ -1,18 +1,29 @@
 # Managed by Puppet, DO NOT TOUCH!
 
 transport:
-        tcp:
-                port: <%= esTCPPortRange %>
+  tcp:
+    port: <%= esTCPPortRange %>
 
 http:
-        port: <%= esHTTPPortRange %>
+  port: <%= esHTTPPortRange %>
 
 cluster:
-        name: "<%= cluster %>"
+  name: "<%= cluster %>"
 
 path:
-        logs: <%= esLogPath %>
-        data: <%= esDataPath %>
+  logs: <%= esLogPath %>
+  data: <%= esDataPath %>
 
 boostrap:
-        mlockall: true
+  mlockall: true
+
+discovery:
+  zen:
+    ping:
+      unicast:
+        hosts:
+          - ip-10-50-95-97.eu-west-1.compute.internal:9300 # puppet
+          - ip-10-252-37-174.us-west-2.compute.internal:9300 # oregon
+          - ip-10-112-97-74.ec2.internal:9300 # virginia
+          - ip-10-172-13-144.us-west-1.compute.internal:9300 # california
+
