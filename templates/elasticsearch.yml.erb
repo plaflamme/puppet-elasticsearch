@@ -17,11 +17,5 @@ path:
 boostrap:
   mlockall: true
 
-discovery.zen.ping.multicast.enabled: false
-
-discovery.zen.ping.unicast.hosts:
-  - ec2-79-125-61-3.eu-west-1.compute.amazonaws.com # puppet
-  - ec2-50-112-26-218.us-west-2.compute.amazonaws.com # oregon
-  - ec2-184-72-131-145.compute-1.amazonaws.com # virginia
-  - ec2-204-236-159-204.us-west-1.compute.amazonaws.com # california
+discovery.zen.ping.multicast.enabled: true
 
