@@ -1,7 +1,7 @@
-# Managed by Puppet, DO NOT TOUCH!
+# Managed by Puppet
 
 network:
-  host: _tap0:ipv4_
+  host: _non_loopback:ipv4_
 
 transport:
   tcp:
@@ -19,6 +19,3 @@ path:
 
 boostrap:
   mlockall: true
-
-discovery.zen.ping.multicast.enabled: true
-
