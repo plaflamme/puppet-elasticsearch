@@ -28,10 +28,10 @@ class elasticsearch($version = "0.18.7", $cluster = "elasticsearch", $dataPath="
 
      include wget
 
-     # TODO: support other OS package names?
-     package { 'openjdk-6-jdk' : 
-       ensure => installed
-     }
+# We expect java to already be installed
+#     package { 'openjdk-6-jdk' : 
+#       ensure => installed
+#     }
 
      # Ensure the elasticsearch user is present
      user { "$esBasename":
