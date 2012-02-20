@@ -22,7 +22,7 @@ class elasticsearch($version = "0.18.7", $cluster = "elasticsearch", $dataPath="
      $esHTTPPortRange  = "9200-9299"
      $esUlimitNofile   = "32000"
      $esUlimitMemlock  = "unlimited"
-     $esPidpath        = "/var/run/{$esBasename}"
+     $esPidpath        = "/var/run/${esBasename}"
      $esPidfile        = "${esPidpath}/${esBasename}.pid"
      $esJarfile        = "${esName}.jar"
 
