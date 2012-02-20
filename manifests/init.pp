@@ -132,7 +132,7 @@ class elasticsearch($version = "0.18.7", $cluster = "elasticsearch", $dataPath="
        require   => Exec["elasticsearch-package"],
      }
 
-	 file { "${esPidpath}"
+	 file { "${esPidpath}":
 	   ensure => directory,
        owner     => "$esBasename",
        group     => "$esBasename",
