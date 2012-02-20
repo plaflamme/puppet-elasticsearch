@@ -5,7 +5,7 @@
 # Usage:
 # include elasticsearch
 
-class elasticsearch($version = "0.18.5", $cluster = "elasticsearch", $dataPath="/var/lib/elasticsearch", $xms = "256m", $xmx = "2048m") {
+class elasticsearch($version = "0.18.7", $cluster = "elasticsearch", $dataPath="/var/lib/elasticsearch", $xms = "256m", $xmx = "2048m") {
      $esBasename       = "elasticsearch"
      $esName           = "${esBasename}-${version}"
      $esFile           = "${esName}.tar.gz"
@@ -14,8 +14,7 @@ class elasticsearch($version = "0.18.5", $cluster = "elasticsearch", $dataPath="
      $esBasePath       = "/usr/local"
      $esPath           = "${esBasePath}/${esName}"
      $esPathLink       = "${esBasePath}/${esBasename}"
-     $esDataPath       = "/var/lib/${esBasename}"
-     $esLibPath        = "${esDataPath}"
+     $esDataPath       = "${dataPath}"
      $esLogPath        = "/var/log/${esBasename}"
      $esXms            = "${xms}"
      $esXmx            = "${xmx}"
@@ -23,12 +22,16 @@ class elasticsearch($version = "0.18.5", $cluster = "elasticsearch", $dataPath="
      $esHTTPPortRange  = "9200-9299"
      $esUlimitNofile   = "32000"
      $esUlimitMemlock  = "unlimited"
-     $esPidpath        = "/var/run"
+     $esPidpath        = "/var/run/{$esBasename}"
      $esPidfile        = "${esPidpath}/${esBasename}.pid"
      $esJarfile        = "${esName}.jar"
 
-     include java
      include wget
+
+     # TODO: support other OS package names?
+     package { 'openjdk-6-jdk' : 
+       ensure => installed
+     }
 
      # Ensure the elasticsearch user is present
      user { "$esBasename":
@@ -128,6 +131,12 @@ class elasticsearch($version = "0.18.5", $cluster = "elasticsearch", $dataPath="
        recurse   => true,
        require   => Exec["elasticsearch-package"],
      }
+
+	 file { "${esPidpath}"
+	   ensure => directory,
+       owner     => "$esBasename",
+       group     => "$esBasename",
+	 }    
 
      file { "$esPath/logs":
        ensure => link,
