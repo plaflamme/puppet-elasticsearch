@@ -6,7 +6,7 @@ define elasticsearch::plugin($plugin = $name, $source = $name, $cmd="install") {
     command => "/usr/local/elasticsearch/bin/plugin -${cmd} $source",
     user    => "elasticsearch",
     creates => "/usr/local/elasticsearch/plugins/$plugin",
-    requires => File["/usr/local/elasticsearch"],
+    require => File["/usr/local/elasticsearch"],
     notify  => Service["elasticsearch"],
   }
 }
