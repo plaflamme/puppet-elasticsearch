@@ -1,11 +1,11 @@
-define elasticsearch::plugin($source, $plugin = $name, $cmd="install") {
+define elasticsearch::plugin($plugin = $name, $source = $name, $cmd="install") {
 
-  include elasticsearch
+  import "elasticsearch"
 
-  exec { "install-plugin":
+  exec { "install-plugin-${plugin}":
     command => "/usr/local/elasticsearch/bin/plugin -${cmd} $source",
     user    => "elasticsearch",
-    creates => "/usr/local/elasticsearch/plugins/$name",
+    creates => "/usr/local/elasticsearch/plugins/$plugin",
     notify  => Service["elasticsearch"],
   }
 }
